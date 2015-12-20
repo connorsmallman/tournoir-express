@@ -4,4 +4,4 @@ let Schema = mongoose.Schema({
 	playerName: String,
 });
 
-export default mongoose.model('Players', Schema, 'players');
+export default mongoose.model('Colors', Schema, 'colors');

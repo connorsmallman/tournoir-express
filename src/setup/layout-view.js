@@ -1,6 +1,6 @@
 'use strict';
 
-import { LayoutView, history } from 'orchestra';
+import { LayoutView, history, $ } from 'orchestra';
 import template from './layout-template.hbs';
 
 export default LayoutView.extend({
@@ -19,7 +19,9 @@ export default LayoutView.extend({
     this.ui.generate.hide();
   },
   generateTounament() {
-    history.navigate('board', { trigger: true });
+    console.log('click');
+    $.post('/api/board');
+    //history.navigate('board', { trigger: true });
   },
   regions: {
     addPlayer: '.add-player-container',

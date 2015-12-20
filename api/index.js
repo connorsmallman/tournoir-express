@@ -1,5 +1,6 @@
 import express from 'express';
 import players from './routes/players';
+import board from './routes/board';
 import bodyParser from 'body-parser';
 import './db';
 
@@ -8,7 +9,8 @@ const root = __dirname + '/../';
 
 app.use(bodyParser.json())
 app.use(express.static(root + 'dist'));
-app.use('/api/players/', players);
+app.use('/api/players', players);
+app.use('/api/board', board);
 
 app.get('/', (req, res) => {
   res.sendFile('index.html', { root });

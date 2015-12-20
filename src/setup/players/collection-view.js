@@ -11,8 +11,6 @@ export default CollectionView.extend({
       'sync': this.render,
     });
     this.collection.fetch();
-
-    console.log(this.collection);
   },
   childView: ChildView,
   className: 'players',
