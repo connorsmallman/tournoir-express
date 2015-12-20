@@ -1,0 +1,17 @@
+$fa-font-path: './fonts';
+
+@import '../node_modules/bootstrap-sass/assets/stylesheets/bootstrap';
+@import '../node_modules/font-awesome/scss/font-awesome';
+@import './setup/styles';
+@import './setup/add/styles';
+@import './setup/players/styles';
+
+#tournoirApp {
+  width: 800px;
+  margin: auto;
+  margin-top: 20px;
+
+  h1 {
+    text-align: center;
+  }
+}
