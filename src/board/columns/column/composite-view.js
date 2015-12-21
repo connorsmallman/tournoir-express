@@ -14,7 +14,7 @@ export default CompositeView.extend({
   template,
   className: 'column',
   childView: TileView,
-  childViewContainer: '.tiles',
+  childViewContainer: '.groups',
   reorderOnSort: true,
   attributes() {
     let columnId = this.model.get('columnId');
