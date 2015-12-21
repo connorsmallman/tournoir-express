@@ -4,7 +4,7 @@ import { Model } from 'orchestra';
 
 export default Model.extend({
   defaults: {
-    order: Number,
+    position: Number,
     groupId: String,
     nextGroupId: String,
     players: Array,
