@@ -20,8 +20,10 @@ export default LayoutView.extend({
   },
   generateTounament() {
     console.log('click');
-    $.post('/api/board');
-    //history.navigate('board', { trigger: true });
+    $.post('/api/board').done(board => {
+      window.localStorage.setItem('board', JSON.stringify(board));
+    });
+    history.navigate('board', { trigger: true });
   },
   regions: {
     addPlayer: '.add-player-container',

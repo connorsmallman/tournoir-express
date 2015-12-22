@@ -4,17 +4,22 @@ import ColumnsView from './collection-view';
 
 export default Route.extend({
   initialize(options = {}) {
-    this.collection = new Collection();
+    let columns = JSON.parse(window.localStorage.getItem('board'));
+    this.collection = new Collection(columns);
     this.layout = options.layout;
   },
 
   fetch() {
-    return this.collection.fetch();
+    return this.collection;
   },
 
   render() {
-    this.layout.getRegion('columns').show(new ColumnsView({
+    let view = new ColumnsView({
       collection: this.collection,
-    }));
+    });
+
+    console.log(view);
+
+    this.layout.getRegion('columns').show(view);
   }
 });

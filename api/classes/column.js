@@ -3,4 +3,8 @@ export default class {
     options = options || {};
     this.groups = options.groups;
   }
+
+  setPosition(position) {
+    this.position = position;
+  }
 }

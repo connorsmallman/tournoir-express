@@ -1,5 +1,7 @@
-{{#each player in players}}
-  <div class="player">
-    {{player.playerName}}
-  </div>
+{{#each players}}
+  {{#if this.playerName}}
+    <div class="player">{{this.playerName}}</div>
+  {{else}}
+    <div class="player"></div>
+  {{/if}}
 {{/each}}

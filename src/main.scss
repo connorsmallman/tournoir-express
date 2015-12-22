@@ -6,6 +6,11 @@ $fa-font-path: './fonts';
 @import './setup/add/styles';
 @import './setup/players/styles';
 
+@import './board/styles';
+@import './board/columns/styles';
+@import './board/columns/column/styles';
+@import './board/columns/column/group/styles';
+
 #tournoirApp {
   width: 800px;
   margin: auto;

@@ -1,0 +1,16 @@
+.columns {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.column {
+  width: 300px;
+  height: 500px;
+  border-left: 1px solid #ccc;
+
+  &:first-child {
+    border-left: none;
+  }
+}

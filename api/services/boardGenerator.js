@@ -39,6 +39,7 @@ function createColumns(playerGroups) {
 
 function setPositions(cols) {
   for (let i = 0; i < cols.length; i++) {
+    cols[i].setPosition(i + 1);
     for (let j = 0; j < cols[i].groups.length; j++) {
       cols[i].groups[j].setPosition({ col: i + 1, group: j + 1 });
       if (i === cols.length - 1) break; //if last group don't set next position.

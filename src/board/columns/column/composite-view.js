@@ -2,24 +2,15 @@
 
 import { CompositeView, Collection } from 'orchestra';
 import template from './template.hbs';
-import GroupView from './group/item-view';
-import Groups from './collection';
+import ChildView from './group/item-view';
 
 export default CompositeView.extend({
   initialize() {
-    this.listenTo(this.collection, 'update', this.render);
     let groups = this.model.get('groups');
-    this.collection = new Groups(groups);
+    this.collection = new Collection(groups);
   },
   template,
   className: 'column',
-  childView: GroupView,
+  childView: ChildView,
   childViewContainer: '.groups',
-  reorderOnSort: true,
-  attributes() {
-    let columnId = this.model.get('columnId');
-    return {
-      'data-column-id': columnId,
-    };
-  }
 });

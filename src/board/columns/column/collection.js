@@ -5,5 +5,4 @@ import Model from './group/model';
 
 export default Collection.extend({
   model: Model,
-  comparator: 'position',
 });
