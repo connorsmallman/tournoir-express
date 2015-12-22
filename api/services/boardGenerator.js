@@ -1,14 +1,14 @@
-import { _ } from 'lodash';
-import Player from '../classes/player';
+import _ from 'lodash';
 import Group from '../classes/group';
 import Column from '../classes/column';
+import isEven from '../helpers/evens';
 
 function createEmptyPlayers(players) {
   if (players.length === 1) {
-    players.push({ playerName: '' });
+    players.push({ playerName: '', isEmpty: true });
     return createEmptyPlayers(players);
   } else if (players.length !== 2 && players.length % 4) {
-    players.push({ playerName: '' });
+    players.push({ playerName: '', isEmpty: true });
     return createEmptyPlayers(players);
   } else {
     return players;
@@ -19,6 +19,18 @@ function shufflePlayers(players) {
   return _.shuffle(players);
 }
 
+function reorderPlayers(players) {
+  let emptyPlayers = _.takeRightWhile(players, player => player.isEmpty);
+  let nonEmptyPlayers = _.takeWhile(players, player => (player.isEmpty === undefined));
+  let newPlayersArray = [];
+  let len = (emptyPlayers.length + nonEmptyPlayers.length);
+  for (let i = 0; i < len; i++) {    
+    if (nonEmptyPlayers[i] !== undefined) newPlayersArray.push(nonEmptyPlayers[i]);
+    if (emptyPlayers[i] !== undefined) newPlayersArray.push(emptyPlayers[i]);
+  }
+  return newPlayersArray;
+}
+
 function groupPlayers(players) {
   return _.chunk(players, 2);
 }
@@ -26,12 +38,16 @@ function groupPlayers(players) {
 function createColumns(playerGroups) {
   let cols = [];
   //Add playerGroups to first column;
-  let groups = _.map(playerGroups, xs => new Group({ players: _.map(xs, x => new Player(x)) }));
+  let groups = _.map(playerGroups, players => new Group({ players: players }));
   cols.push(new Column({ groups }));
   // create empty groups for rest of columns
   for (let i = (playerGroups.length - 1); i > 0; i--) {
     if (i === 1) break;
-    let groups = _.map(_.range(i / 2), xs => new Group({ players: _.map(_.range(2), x => new Player(x)) }));
+    let groups = [];
+    let len = i / 2;
+    for (let j = 0; j < len; j++) {
+      groups.push(new Group());
+    }
     cols.push(new Column({ groups }));
   }
   return cols;
@@ -42,16 +58,35 @@ function setPositions(cols) {
     cols[i].setPosition(i + 1);
     for (let j = 0; j < cols[i].groups.length; j++) {
       cols[i].groups[j].setPosition({ col: i + 1, group: j + 1 });
-      if (i === cols.length - 1) break; //if last group don't set next position.
+      cols[i].groups[j].setChildrenPosition();
+      if (i === (cols.length - 1)) break; //if last group don't set next position.
       cols[i].groups[j].setNextPosition();
+      cols[i].groups[j].setChildrenNextPosition();
     }
   }
   return cols;
 }
 
+function createByes(cols) {
+  let byes = [];
+  let len = cols[0].groups.length;
+  for (let i = 0; i < len; i++) {
+    let players = cols[0].groups[i].players;
+    let emptyPlayerIndex = _.findIndex(players, player => player.isEmpty);
+    let playerIndex = _.findIndex(players, player => !player.isEmpty);
+    if (emptyPlayerIndex !== -1 && playerIndex !== -1) byes.push(players[playerIndex]);
+  }
+  _.forEach(byes, bye => {
+    cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].addPlayer(bye);
+    cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].setChildrenPosition();
+    cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].setChildrenNextPosition();
+  });
+  return cols;
+}
+
 export default {
 	createBoard(players) {
-    let board = _.flow(createEmptyPlayers, shufflePlayers, groupPlayers, createColumns, setPositions);
+    let board = _.flow(shufflePlayers, createEmptyPlayers, reorderPlayers, groupPlayers, createColumns, setPositions, createByes);
     return board(players);
 	}
 };
