@@ -2,6 +2,7 @@
   "name": "ASP.NET",
   "version": "0.0.0",
   "devDependencies": {
+    "babel": "^5.8.29",
     "babelify": "^6.1.2",
     "body-parser": "^1.14.2",
     "bootstrap-sass": "^3.3.6",
@@ -18,6 +19,7 @@
     "gulp-util": "^3.0.7",
     "handlebars": "^4.0.5",
     "hbsfy": "^2.4.1",
+    "lodash": "^3.10.1",
     "mongoose": "^4.3.3",
     "orchestra": "^1.2.1",
     "rimraf": "2.2.8",

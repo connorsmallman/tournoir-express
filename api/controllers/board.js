@@ -3,10 +3,11 @@ import boardGenerator from '../services/boardGenerator';
 
 export default {
 	create() {
-		let players = playersController.all();
-		players.then((players) => {
-			console.log(players);
-			//boardGenerator.createBoard(players);
-		});
+    return new Promise((resolve, reject) => {
+      let players = playersController.all();
+      players.then((players) => {
+        resolve(boardGenerator.createBoard(players));
+      });
+    });
 	},
 }
