@@ -69,13 +69,11 @@ function setPositions(cols) {
 
 function createByes(cols) {
   let byes = [];
-  let len = cols[0].groups.length;
-  for (let i = 0; i < len; i++) {
-    let players = cols[0].groups[i].players;
-    let emptyPlayerIndex = _.findIndex(players, player => player.isEmpty);
-    let playerIndex = _.findIndex(players, player => !player.isEmpty);
-    if (emptyPlayerIndex !== -1 && playerIndex !== -1) byes.push(players[playerIndex]);
-  }
+  _.forEach(cols[0].groups, group => {
+    let emptyIndex = _.findIndex(group.players, player => player.isEmpty);
+    let nonEmptyIndex = _.findIndex(group.players, player => !player.isEmpty);
+    if (emptyIndex !== -1 && nonEmptyIndex !== -1) bye.push(group.players[nonEmptyIndex]);
+  });
   _.forEach(byes, bye => {
     cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].addPlayer(bye);
     cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].setChildrenPosition();
