@@ -67,13 +67,18 @@ function setPositions(cols) {
   return cols;
 }
 
-function createByes(cols) {
+function getByes(groups) {
   let byes = [];
-  _.forEach(cols[0].groups, group => {
+  _.forEach(groups, group => {
     let emptyIndex = _.findIndex(group.players, player => player.isEmpty);
     let nonEmptyIndex = _.findIndex(group.players, player => !player.isEmpty);
     if (emptyIndex !== -1 && nonEmptyIndex !== -1) bye.push(group.players[nonEmptyIndex]);
   });
+  return byes;
+}
+
+function createByes(cols) {
+  let byes = getByes(cols[0].groups);
   _.forEach(byes, bye => {
     cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].addPlayer(bye);
     cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].setChildrenPosition();
