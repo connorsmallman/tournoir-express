@@ -36,53 +36,54 @@ function groupPlayers(players) {
 }
 
 function createColumns(playerGroups) {
-  let cols = [];
-  //Add playerGroups to first column;
-  let groups = _.map(playerGroups, players => new Group({ players: players }));
-  cols.push(new Column({ groups }));
-  // create empty groups for rest of columns
-  for (let i = (playerGroups.length - 1); i > 0; i--) {
-    if (i === 1) break;
-    let groups = [];
-    let len = i / 2;
-    for (let j = 0; j < len; j++) {
-      groups.push(new Group());
+  let colLength = (Math.log(playerGroups.length) / Math.log(2) + 1);
+  let cols = _.map(_.range(colLength), col => new Column());
+  let groups = _.map(playerGroups, players => new Group({ players }));
+  return _.forEach(cols, (col, i) => {
+    if (!i) {
+      //add groups to first column
+      _.forEach(groups, group => col.addGroup(group));
+    } else {
+      //create empty groups for rest of columns
+      _.forEach(_.range(i / 2), col.addGroup(new Group()));
     }
-    cols.push(new Column({ groups }));
-  }
-  return cols;
+  });
 }
 
 function setPositions(cols) {
-  for (let i = 0; i < cols.length; i++) {
-    cols[i].setPosition(i + 1);
-    for (let j = 0; j < cols[i].groups.length; j++) {
-      cols[i].groups[j].setPosition({ col: i + 1, group: j + 1 });
-      cols[i].groups[j].setChildrenPosition();
-      if (i === (cols.length - 1)) break; //if last group don't set next position.
-      cols[i].groups[j].setNextPosition();
-      cols[i].groups[j].setChildrenNextPosition();
-    }
-  }
-  return cols;
+  return _.forEach(cols, (col, i) => {
+    col.setPosition(i + 1);
+    _.forEach(col.groups, (group, j) => {
+      group
+        .setPosition({ col: i + 1, group: j + 1 })
+        .setChildrenPosition();
+      //if last column don't set next position;
+      if (i === (cols.length - 1)) return false;
+      group
+        .setNextPosition()
+        .setChildrenNextPosition();
+    });
+  });
 }
 
 function getByes(groups) {
-  let byes = [];
-  _.forEach(groups, group => {
-    let emptyIndex = _.findIndex(group.players, player => player.isEmpty);
-    let nonEmptyIndex = _.findIndex(group.players, player => !player.isEmpty);
-    if (emptyIndex !== -1 && nonEmptyIndex !== -1) bye.push(group.players[nonEmptyIndex]);
-  });
-  return byes;
+  let wrapped = _(groups);
+  return wrapped
+    .filter(group => _.some(_.pluck(group.players, 'isEmpty'))) //filter groups with empty players
+    .pluck('players') // pluck players from group
+    .flatten()
+    .where({ isEmpty: false }) // only get non empty players
+    .value();
 }
 
 function createByes(cols) {
   let byes = getByes(cols[0].groups);
   _.forEach(byes, bye => {
-    cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].addPlayer(bye);
-    cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].setChildrenPosition();
-    cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1].setChildrenNextPosition();
+    let group = cols[bye.nextPosition.col - 1].groups[bye.nextPosition.group - 1];
+    group
+      .addPlayer(bye)
+      .setChildrenPosition()
+      .setChildrenNextPosition();
   });
   return cols;
 }

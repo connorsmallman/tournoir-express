@@ -20,27 +20,32 @@ export default class {
     } else {
       this.players.push(new Player(player));
     }
+    return this;
   }
 
   setPosition(position) {
     this.position = position;
     this.players.forEach(player => player.setPosition(position));
+    return this;
   }
 
   setNextPosition(nextPosition) {
     this.nextPosition.col = this.position.col + 1;
     this.nextPosition.group = (isEven(this.position.group)) ? (this.position.group / 2) : ((this.position.group + 1) / 2);
+    return this;
   }
 
   setChildrenPosition() {
     if (this.players.length) {
       this.players.forEach(player => player.setPosition(this.position));
     }
+    return this;
   }
 
   setChildrenNextPosition() {
     if (this.players.length) {
       this.players.forEach(player => player.setNextPosition(this.nextPosition));
     }
+    return this;
   }
 }
