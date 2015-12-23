@@ -20,15 +20,9 @@ function shufflePlayers(players) {
 }
 
 function reorderPlayers(players) {
-  let emptyPlayers = _.takeRightWhile(players, player => player.isEmpty);
-  let nonEmptyPlayers = _.takeWhile(players, player => (player.isEmpty === undefined));
-  let newPlayersArray = [];
-  let len = (emptyPlayers.length + nonEmptyPlayers.length);
-  for (let i = 0; i < len; i++) {    
-    if (nonEmptyPlayers[i] !== undefined) newPlayersArray.push(nonEmptyPlayers[i]);
-    if (emptyPlayers[i] !== undefined) newPlayersArray.push(emptyPlayers[i]);
-  }
-  return newPlayersArray;
+  let emptyPlayers = _.where(players, { isEmpty: true });
+  let nonEmptyPlayers = _.filter(players, player => _.isUndefined(player.isEmpty));
+  return _.filter(_.flatten(_.zip(nonEmptyPlayers, emptyPlayers)), player => _.isObject(player));
 }
 
 function groupPlayers(players) {
@@ -37,7 +31,7 @@ function groupPlayers(players) {
 
 function createColumns(playerGroups) {
   let colLength = (Math.log(playerGroups.length) / Math.log(2) + 1);
-  let cols = _.map(_.range(colLength), col => new Column());
+  let cols = _.map(_.range(colLength), x => new Column());
   let groups = _.map(playerGroups, players => new Group({ players }));
   return _.forEach(cols, (col, i) => {
     if (!i) {
