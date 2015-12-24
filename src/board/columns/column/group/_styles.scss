@@ -1,3 +1,15 @@
 .group {
   margin: 10px 0;
+  border: 1px solid #ccc;
+  border-bottom: none;
+
+ .player {
+ 	padding: 10px 20px;
+ 	border-bottom: 1px solid #ccc;
+
+  	&:hover {
+  		background: #ccc;
+  		cursor: pointer;
+  	}
+  }
 }

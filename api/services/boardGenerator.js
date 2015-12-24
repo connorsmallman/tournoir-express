@@ -5,10 +5,10 @@ import isEven from '../helpers/evens';
 
 function createEmptyPlayers(players) {
   if (players.length === 1) {
-    players.push({ playerName: '', isEmpty: true });
+    players.push({ playerName: '', isVacant: true });
     return createEmptyPlayers(players);
   } else if (players.length !== 2 && players.length % 4) {
-    players.push({ playerName: '', isEmpty: true });
+    players.push({ playerName: '', isVacant: true });
     return createEmptyPlayers(players);
   } else {
     return players;
@@ -20,8 +20,8 @@ function shufflePlayers(players) {
 }
 
 function reorderPlayers(players) {
-  let emptyPlayers = _.where(players, { isEmpty: true });
-  let nonEmptyPlayers = _.filter(players, player => _.isUndefined(player.isEmpty));
+  let emptyPlayers = _.where(players, { isVacant: true });
+  let nonEmptyPlayers = _.filter(players, player => _.isUndefined(player.isVacant));
   return _.filter(_.flatten(_.zip(nonEmptyPlayers, emptyPlayers)), player => _.isObject(player));
 }
 
@@ -33,13 +33,17 @@ function createColumns(playerGroups) {
   let colLength = (Math.log(playerGroups.length) / Math.log(2) + 1);
   let cols = _.map(_.range(colLength), x => new Column());
   let groups = _.map(playerGroups, players => new Group({ players }));
-  return _.forEach(cols, (col, i) => {
+  return _.forEach(cols, (col, i, cols) => {
     if (!i) {
       //add groups to first column
       _.forEach(groups, group => col.addGroup(group));
+    } else if (i === cols.length - 1){
+      //is last col add one group
+      col.addGroup(new Group());
     } else {
-      //create empty groups for rest of columns
-      _.forEach(_.range(i / 2), col.addGroup(new Group()));
+      //add empty groups to next column
+      //half the number of the previous column
+      _.forEach(_.range(cols[i - 1].groups.length / 2), x => col.addGroup(new Group()));
     }
   });
 }
@@ -63,10 +67,10 @@ function setPositions(cols) {
 function getByes(groups) {
   let wrapped = _(groups);
   return wrapped
-    .filter(group => _.some(_.pluck(group.players, 'isEmpty'))) //filter groups with empty players
+    .filter(group => _.some(_.pluck(group.players, 'isVacant'))) //filter groups with empty players
     .pluck('players') // pluck players from group
     .flatten()
-    .where({ isEmpty: false }) // only get non empty players
+    .where({ isVacant: false }) // only get non empty players
     .value();
 }
 
@@ -82,9 +86,10 @@ function createByes(cols) {
   return cols;
 }
 
+let board = _.flow(shufflePlayers, createEmptyPlayers, reorderPlayers, groupPlayers, createColumns, setPositions, createByes);
+
 export default {
 	createBoard(players) {
-    let board = _.flow(shufflePlayers, createEmptyPlayers, reorderPlayers, groupPlayers, createColumns, setPositions, createByes);
-    return board(players);
+	    return board(players);
 	}
 };

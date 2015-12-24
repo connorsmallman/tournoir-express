@@ -4,8 +4,6 @@ import { Router, Radio, Collection } from 'orchestra';
 import LayoutView from './layout-view';
 import ColumnsRoute from './columns/route';
 
-const playerChannel = Radio.channel('player');
-
 export default Router.extend({
   initialize(options = {}) {
     this.container = options.container;

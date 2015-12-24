@@ -1,7 +1,7 @@
 {{#each players}}
   {{#if this.playerName}}
-    <div class="player">{{this.playerName}}</div>
+    <div data-id="{{this._id}}" class="player">{{this.playerName}}</div>
   {{else}}
-    <div class="player"></div>
+    <div class="player vacant-player">Bye</div>
   {{/if}}
 {{/each}}
