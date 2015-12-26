@@ -3,26 +3,25 @@ import Group from '../classes/group';
 import Column from '../classes/column';
 import isEven from '../helpers/evens';
 
-function createEmptyPlayers(players) {
-  if (players.length === 1) {
-    players.push({ playerName: '', isVacant: true });
-    return createEmptyPlayers(players);
-  } else if (players.length !== 2 && players.length % 4) {
-    players.push({ playerName: '', isVacant: true });
-    return createEmptyPlayers(players);
-  } else {
-    return players;
-  }
+function vacantRange(start, end) {
+  if (end <= 2) return 2;
+  if (end % 4) return vacantRange(start + 1, end + 1);
+  return start;
+}
+
+function addVacantPlayers(players) {
+  let range = _.range(vacantRange(0, players.length));
+  let vacantPlayers = _.map(range, x => ({ playerName: '', isVacant: true }));
+  let zippedPlayers = _.zip(players, vacantPlayers);
+  let wrapped = _(zippedPlayers);
+  return wrapped
+    .flatten()
+    .filter(player => _.isObject(player))
+    .value();
 }
 
 function shufflePlayers(players) {
   return _.shuffle(players);
-}
-
-function reorderPlayers(players) {
-  let emptyPlayers = _.where(players, { isVacant: true });
-  let nonEmptyPlayers = _.filter(players, player => _.isUndefined(player.isVacant));
-  return _.filter(_.flatten(_.zip(nonEmptyPlayers, emptyPlayers)), player => _.isObject(player));
 }
 
 function groupPlayers(players) {
@@ -86,7 +85,7 @@ function createByes(cols) {
   return cols;
 }
 
-let board = _.flow(shufflePlayers, createEmptyPlayers, reorderPlayers, groupPlayers, createColumns, setPositions, createByes);
+let board = _.flow(shufflePlayers, addVacantPlayers, groupPlayers, createColumns, setPositions, createByes);
 
 export default {
 	createBoard(players) {
